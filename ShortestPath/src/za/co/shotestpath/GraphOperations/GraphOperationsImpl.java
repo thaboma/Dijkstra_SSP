@@ -20,13 +20,16 @@ public class GraphOperationsImpl implements IGraphOperations {
 
 	Graph graph;
 
+//	Graph outGraph;
+
 	public GraphOperationsImpl(Graph graph) {
 		super();
 		this.graph = graph;
+		// this.outGraph = graph.;
 	}
 
 	@Override
-	public void calculateShortestPath(Node source ,Node target ) {
+	public Graph calculateShortestPath(Node source, Node target) {
 		source.setDistance(0);
 
 		Set<Node> settledNodes = new HashSet<>();
@@ -34,13 +37,19 @@ public class GraphOperationsImpl implements IGraphOperations {
 
 		unsettledNodes.add(source);
 
-		outer :
-		while (unsettledNodes.size() != 0) {
+		outer: while (unsettledNodes.size() != 0) {
 			Node currentNode = getLowestDistanceNode(unsettledNodes);
 			unsettledNodes.remove(currentNode);
-			for (Node adjacentNode = currentNode.getAdjacentNodes().iterator().next(); currentNode.getAdjacentNodes()
-					.iterator().hasNext();currentNode.getAdjacentNodes()
-					.iterator().next()) {
+			
+//			if (!"SWE*".contains(currentNode.getSymbol())) {
+//			//if (currentNode.getSymbol().equals(".")) {	
+//				currentNode.setSymbol("\"");
+//		       graph= graph.setNode(currentNode);
+//		  }	
+
+			// Look at adding adjacent nodes here rather
+			for (Iterator<Node> iterator = currentNode.getAdjacentNodes().iterator(); iterator.hasNext();) {
+				Node adjacentNode = iterator.next();
 				if (!settledNodes.contains(adjacentNode)) {
 					calculateMinimumDistance(adjacentNode, currentNode);
 					unsettledNodes.add(adjacentNode);
@@ -52,7 +61,8 @@ public class GraphOperationsImpl implements IGraphOperations {
 			}
 			settledNodes.add(currentNode);
 		}
-		// return graph;
+
+		return graph;
 	}
 
 	@Override
@@ -60,6 +70,12 @@ public class GraphOperationsImpl implements IGraphOperations {
 		Node lowestDistanceNode = null;
 		int lowestDistance = Integer.MAX_VALUE;
 		for (Node node : unsettledNodes) {
+			
+			//if (!"SWE*".contains(node.getSymbol())) {
+//			if (node.getSymbol().equals(".")) {	
+//			   node.setSymbol("\"");
+//		       graph= graph.setNode(node);
+//		  }	
 			int nodeDistance = node.getDistance();
 			if (nodeDistance < lowestDistance) {
 				lowestDistance = nodeDistance;
@@ -70,13 +86,20 @@ public class GraphOperationsImpl implements IGraphOperations {
 	}
 
 	@Override
-	public Node calculateMinimumDistance(Node evaluationNode, Node sourceNode) {
+	public Node calculateMinimumDistance(Node evaluationNode, Node sourceNode) {	
+		
+
+		
+				
 		Integer sourceDistance = sourceNode.getDistance();
 		if (sourceDistance + 1 < evaluationNode.getDistance()) {
 			evaluationNode.setDistance(sourceDistance + 1);
 			LinkedList<Node> shortestPath = new LinkedList<>(sourceNode.getShortestPath());
+
 			shortestPath.add(sourceNode);
 			evaluationNode.setShortestPath(shortestPath);
+			
+
 		}
 
 		return evaluationNode;
@@ -93,113 +116,137 @@ public class GraphOperationsImpl implements IGraphOperations {
 
 		Integer lineNo = sourceNode.getY_coordinate();
 
-		Node adjNodeS =null;
-		Node adjNodeN =null;
-		
+		Node adjNodeS = null;
+		Node adjNodeN = null;
+
 		if (nodesMap.get(lineNo - 1) != null) {
 			adjNodeN = graph.getNode(sourceNode.getX_coordinate(), (sourceNode.getY_coordinate() - 1));
-		}		
-		
+		}
+
 		if (nodesMap.get(lineNo + 1) != null) {
 			adjNodeS = graph.getNode(sourceNode.getX_coordinate(), (sourceNode.getY_coordinate() + 1));
 		}
 
-			
-			Node adjNodeW = graph.getNode((sourceNode.getX_coordinate() - 2), sourceNode.getY_coordinate());
-			
-			Node adjNodeE = graph.getNode((sourceNode.getX_coordinate() + 2), sourceNode.getY_coordinate() );
+		Node adjNodeW = graph.getNode((sourceNode.getX_coordinate() - 2), sourceNode.getY_coordinate());
 
-			if (adjNodeE != null) {
-				adjacentNodes.add(adjNodeE);
-			}
-			if (adjNodeW != null) {
-				adjacentNodes.add(adjNodeW);
-			}
-			if (adjNodeN != null) {
-				adjacentNodes.add(adjNodeN);
-			}
-			if (adjNodeS != null) {
-				adjacentNodes.add(adjNodeS);
-			}
+		Node adjNodeE = graph.getNode((sourceNode.getX_coordinate() + 2), sourceNode.getY_coordinate());
+
+		if (adjNodeE != null) {
+			adjacentNodes.add(adjNodeE);
+		}
+		if (adjNodeW != null) {
+			adjacentNodes.add(adjNodeW);
+		}
+		if (adjNodeN != null) {
+			adjacentNodes.add(adjNodeN);
+		}
+		if (adjNodeS != null) {
+			adjacentNodes.add(adjNodeS);
+		}
 		return adjacentNodes;
 	}
 
 	@Override
 	public void setSoure(Node sourceNode) {
-		graph.setSource(sourceNode);		
+		graph.setSource(sourceNode);
 	}
 
 	@Override
 	public void setTarget(Node targetNode) {
-		graph.setTarget(targetNode);		
+		graph.setTarget(targetNode);
 	}
-
 
 	@Override
 	public void parseFile(File inputFile) throws IOException {
 
-      BufferedReader buf = new BufferedReader(new FileReader(inputFile));
-     
-      Integer lineNo =0;
-      String line = null;
-      
-      while((line=buf.readLine())!=null) {    	 
-    	  parseline(lineNo,line);  
-    	  lineNo++;
-      }
-      buf.close();
-      
-     for(Node node : graph.getNodes()) {    	 
+		BufferedReader buf = new BufferedReader(new FileReader(inputFile));
 
-    	 if (node.getSymbol().equals("S")) {
-    		 graph.setSource(node);
-    	 }
-    	 
-    	 if (node.getSymbol().equals("E")) {
-    		 graph.setTarget(node);
-    	 }   
+		Integer lineNo = 0;
+		String line = null;
 
-    	 // Add adjacent nodes to each of the nodes
-    	 List<Node> adjacentNodes= getAdjacentNodes(node);
-    	 graph.addAdjacentNodes(node, adjacentNodes);
-     }
-		
-	}
-	
-	
-	public void parseline(Integer lineNo,String line) {
- 		System.out.println("lineNo "+lineNo+" is .. ["+line+"]");
-		 List<Node> nodes = new ArrayList<>();  
-		  for(int i=0;i<line.length();i=i+2) {
-	    	 
-	    	 String symbol =""+line.charAt(i);
-	    	 Node node = new Node(i, lineNo, symbol); 
-	    	 nodes.add(node);    	 
-	     }
-		  graph.getNodes().addAll(nodes);
-		  graph.getNodesMap().put(lineNo, nodes);     
-			
+		while ((line = buf.readLine()) != null) {
+			parseline(lineNo, line);
+			lineNo++;
 		}
+		buf.close();
+
+		for (Node node : graph.getNodes()) {
+
+			if (node.getSymbol().equals("S")) {
+				graph.setSource(node);
+			}
+
+			if (node.getSymbol().equals("E")) {
+				graph.setTarget(node);
+			}
+
+			// Add adjacent nodes to each of the nodes
+			List<Node> adjacentNodes = getAdjacentNodes(node);
+			graph.addAdjacentNodes(node, adjacentNodes);
+		}
+
+	}
+
+	public void parseline(Integer lineNo, String line) {
+		// System.out.println("lineNo "+lineNo+" is .. ["+line+"]");
+		System.out.println(line);
+		List<Node> nodes = new ArrayList<>();
+		for (int i = 0; i < line.length(); i = i + 2) {
+
+			String symbol = "" + line.charAt(i);
+			Node node = new Node(i, lineNo, symbol);
+			nodes.add(node);
+		}
+		graph.getNodes().addAll(nodes);
+		graph.getNodesMap().put(lineNo, nodes);
+
+	}
 
 	@Override
 	public void printOutput() {
-		
-     for(Integer lineNo  :graph.getNodesMap().keySet()) {
-    	 parseLine(lineNo);    	 
-     }	
-     
+
+		for (Integer lineNo : graph.getNodesMap().keySet()) {
+			parseLine(lineNo);
+		}
+
 	}
-	
-	
-	public void parseLine(Integer lineNo) { 
-		
+
+	public void parseLine(Integer lineNo) {
+
 		for (Iterator<Node> iterator = graph.getNodesMap().get(lineNo).iterator(); iterator.hasNext();) {
 			Node node = iterator.next();
-			
-			//System.out.print(node +"");
+			System.out.print(node.getSymbol() + " ");
 		}
+
 		System.out.println();
 	}
-	
-	
+
+	@Override
+	public void markVisitedNodes(List<Node> shortestpath) {
+
+		for (Node node : shortestpath) {
+
+			for (Iterator<Node> iterator = node.getAdjacentNodes().iterator(); iterator.hasNext();) {
+				Node adjacentNode = iterator.next();
+
+				if (!"SWE*".contains(adjacentNode.getSymbol())) {
+					adjacentNode.setSymbol("\"");
+					graph = graph.setNode(adjacentNode);
+				}
+
+			}
+		}
+	}
+
+	@Override
+	public void markShortesPathNodes(List<Node> shortestpath) {
+
+		for (Node node : shortestpath) {
+
+			if (!"SE".contains(node.getSymbol())) {
+				node.setSymbol("*");
+				graph = graph.setNode(node);
+			}
+		}
+	}
 }

@@ -41,10 +41,7 @@ public class Node {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((adjacentNodes == null) ? 0 : adjacentNodes.hashCode());
-		result = prime * result + ((distance == null) ? 0 : distance.hashCode());
-		result = prime * result + ((shortestPath == null) ? 0 : shortestPath.hashCode());
-		result = prime * result + ((symbol == null) ? 0 : symbol.hashCode());
+		result = prime * result + ((symbol == null) ? 0 : prime);
 		result = prime * result + x_coordinate;
 		result = prime * result + y_coordinate;
 		return result;

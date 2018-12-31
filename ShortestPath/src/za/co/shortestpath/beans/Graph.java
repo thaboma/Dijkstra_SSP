@@ -22,6 +22,14 @@ public class Graph {
 	private Node source;
 
 	private Node target;
+	
+	public Graph(Graph graph) { 
+		super();
+		//this.
+		this.nodes = graph.getNodes();
+		this.nodesMap = graph.getNodesMap();
+		
+	}
 
 	public Graph() {
 		super();
@@ -95,6 +103,28 @@ public class Graph {
 		}
 
 		return null;
+	}
+	
+	public Graph setNode(Node node) {
+
+		List<Node> nodes = nodesMap.get(node.getY_coordinate());		 
+
+		for (int i = 0; i < nodes.size(); i=i+2) {
+				
+				if (node.getX_coordinate() == i) {
+
+					//if (node.getSymbol().equals("S")) {
+						if (!"SWE*".contains(node.getSymbol())) {
+					nodesMap.get(node.getY_coordinate()).set(i, node);
+					nodes = nodesMap.get(node.getY_coordinate());
+					
+					nodesMap.put(node.getY_coordinate(), nodes);
+					this.setNodesMap(nodesMap);
+					break;
+					}
+			}
+		}
+   return this;
 	}
 
 }

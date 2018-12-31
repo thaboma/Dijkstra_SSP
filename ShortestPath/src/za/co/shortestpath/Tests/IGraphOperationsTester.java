@@ -74,7 +74,9 @@ class IGraphOperationsTester {
 	@SuppressWarnings("deprecation")
 	@Test
 	final void testParseFile() throws IOException {
-		// fail("Not yet implemented"); // TODO
+		System.out.println("\r\n+++++++++++++++++++++++++++++++++++++++");
+		System.out.println("Before applying shortest path aglorithm");
+		System.out.println("+++++++++++++++++++++++++++++++++++++++");
 
 		graphOperations.parseFile(testFile);
 		Assert.assertTrue("test message", true);
@@ -106,7 +108,10 @@ class IGraphOperationsTester {
 	 */
 	@Test
 	final void testPrintOutput() {
-		// fail("Not yet implemented"); // TODO
+		System.out.println("\r\n+++++++++++++++++++++++++++++++++++++++");
+		System.out.println("After applying shortest path aglorithm");
+		System.out.println("+++++++++++++++++++++++++++++++++++++++");
+		graphOperations.printOutput();
 	}
 
 	@Test
@@ -117,8 +122,8 @@ class IGraphOperationsTester {
 		//Node node  = graph.getNode(4, 0);
 
 			if (graphOperations.getAdjacentNodes(node).size() > 0) {
-				System.out.println();
-				System.out.println("For Node  [" + node + "]");
+			 	System.out.println();
+			 System.out.println("For Node  [" + node + "]");
 
 				for (Node adjNode : graphOperations.getAdjacentNodes(node)) {
 
@@ -131,5 +136,26 @@ class IGraphOperationsTester {
 		}
 
 	}
+	
+	@Test
+	final void testCalculateMinimumDistance() {
+		//fail("Not yet implemented"); // TODO
+		Node source = graph.getSource();
+		Node target = graph.getTarget();
+		graph = graphOperations.calculateShortestPath(source, target);
+		//graph= new Graph(graphOperations.calculateShortestPath(source, target));
+	}
+	
+	@Test
+	final void testShortestPath() {
+		//fail("Not yet implemented"); // TODO
+		
+		//graphOperations.calculateMinimumDistance(graph.getTarget(), graph.getSource());
+		System.out.println("Shortest path nodes are :  >> ");
+		    for (Node node :graph.getTarget().getShortestPath()){
+		    	System.out.println(node);
+		    }
+	}
+	
 
 }
